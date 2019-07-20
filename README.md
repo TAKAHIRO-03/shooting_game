@@ -1,10 +1,9 @@
 Name
 ====
-
 Javaでシューティングゲーム
 
 
-Overview
+## Overview
 Java のGUIツールキットSwingを使用して、シューティングゲームを作りました。
 
 ## Description
