@@ -7,6 +7,7 @@ Javaでシューティングゲーム
 Java のGUIツールキットSwingを使用して、シューティングゲームを作りました。
 
 ## Description
+・java version "1.8.0_131"で動作確認済み
 
 ## Demo
 
