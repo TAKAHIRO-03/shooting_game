@@ -2,9 +2,10 @@ package shooting;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.LineBorder;
+import java.util.ArrayList;
 
+import javax.swing.*;
+import shooting.shooting_dao;
 
 public class shooting_game extends JFrame {
     final int windowWidth = 800;
@@ -26,6 +27,7 @@ public class shooting_game extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         MyJPanel panel= new MyJPanel();
+        panel.setLayout(null);
         Container c = getContentPane();
         c.add(panel);
         setVisible(true);
@@ -39,6 +41,15 @@ public class shooting_game extends JFrame {
         ImageIcon iconMe, iconEnemy;
         Image imgMe, imgMeLife , imgEnemy;
         JLabel label_time = new JLabel();
+        JLabel User = new JLabel();
+        JLabel Rank1 = new JLabel();
+        JLabel Rank2 = new JLabel();
+        JLabel Rank3 = new JLabel();
+        String GetRank[][] = new String[3][3];
+        ArrayList<String> texts = new ArrayList<>();
+        JTextField InputUserName;
+        String UserName;
+    	shooting_dao dao = new shooting_dao();	
         double CountTime = 0.0;
 
         /* 自機に関する変数 */
@@ -72,8 +83,18 @@ public class shooting_game extends JFrame {
         	// 全体の設定
             setBackground(Color.black);
             setFocusable(true); //パネルでキーを受付ける
-            addKeyListener(this);            
+            addKeyListener(this);
+            User();
         }
+        
+        public void User() {
+			InputUserName = new JTextField("", 20);
+			InputUserName.setLayout(null);
+			InputUserName.setBounds(150, 200, 500, 40);
+			this.add(InputUserName);
+			InputUserName.addKeyListener(this);
+        }     
+        
         
         public void run() {            
             // 画像の取り込み
@@ -114,6 +135,49 @@ public class shooting_game extends JFrame {
             this.add(label_time);
         }
         
+        public void RankingLabel() {
+
+	        	User.setOpaque(true);
+	        	User.setBackground(Color.black);
+	        	User = new JLabel(UserName + "さんの" + "只今の記録：" + CountTime/10 + "秒");
+	        	User.setBounds(150, 100, 500, 50);
+	        	User.setHorizontalAlignment(JLabel.CENTER);
+	        	User.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 24));
+	        	User.setForeground(Color.white);
+	        	this.add(User);
+        	
+	        	Rank1.setOpaque(true);
+	        	Rank1.setBackground(Color.black);
+	        	Rank1 = new JLabel("No,1:" + GetRank[0][0] + ":" + GetRank[0][1]);
+	        	Rank1.setBounds(150, 180, 500, 50);
+	        	Rank1.setHorizontalAlignment(JLabel.CENTER);
+	        	Rank1.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 20));
+	        	Rank1.setForeground(Color.yellow);
+	        	this.add(Rank1);
+	        
+	        if(GetRank[1][0] != null) {
+	        	Rank2.setOpaque(true);
+	        	Rank2.setBackground(Color.black);
+	        	Rank2 = new JLabel("No,2:" + GetRank[1][0] + ":" + GetRank[1][1]);
+	        	Rank2.setBounds(150, 230, 500, 50);
+	        	Rank2.setHorizontalAlignment(JLabel.CENTER);
+	        	Rank2.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 20));
+	        	Rank2.setForeground(new Color(128,128,128));
+	        	this.add(Rank2);
+	        }
+	        
+	        if(GetRank[2][0] != null) {
+	        	Rank3.setOpaque(true);
+	        	Rank3.setBackground(Color.black);
+	        	Rank3 = new JLabel("No,3:" + GetRank[2][0] + ":" + GetRank[2][1]);
+	        	Rank3.setBounds(150, 280, 500, 50);
+	        	Rank3.setHorizontalAlignment(JLabel.CENTER);
+	        	Rank3.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 20));
+	        	Rank3.setForeground(new Color(115,41,61));
+	        	this.add(Rank3);
+	        }
+        }
+        
         public class myListener implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				CountTime++;
@@ -125,14 +189,16 @@ public class shooting_game extends JFrame {
 			int keycode = e.getKeyCode();
 			//ゲームスタート
 			  if (keycode == KeyEvent.VK_ENTER && mode == 0){
+				 UserName = InputUserName.getText();
+				 this.remove(InputUserName);
 				 mode = 1;
 				 run();
 			  }else if(keycode == KeyEvent.VK_ENTER && mode == 3) {
 				 mode = 1;
 				 run();
 			  }else if(keycode == KeyEvent.VK_ENTER && mode == 4) {
-				  mode = 1;
-				  run();
+				 mode = 1;
+				 run();
 			  }
 			 //終わらせる時
      		  int mod = e.getModifiersEx();
@@ -161,23 +227,32 @@ public class shooting_game extends JFrame {
 				          }
 			          }
 				  }
-			 
 		}		
 
         /* パネル上の描画 */
         public void paintComponent(Graphics g) {
 	        if(mode == 0) {
+	        	//スタート画面
 	        	dimOfPanel = getSize();
-		        super.paintComponent(g);
+		        super.paintComponent(g);		        
 		        Font font3 = new Font("HGP創英角ﾎﾟｯﾌﾟ体",Font.ITALIC,30);
+		        Font font2 = new Font("HGP創英角ﾎﾟｯﾌﾟ体",Font.ITALIC,20);
 				g.setFont(font3);
 				g.setColor(Color.white);
-				g.drawString("シューティングゲーム〜〜〜〜〜〜〜", 150, 150);
-				g.setColor(Color.white);
+				g.drawString("シューティングゲーム〜〜〜〜〜〜〜", 150, 100);
 				g.drawString("Start: Enter  Exit: Shift + Q ", 200, 350);
+				g.setFont(font2);
+				g.setColor(Color.red);
+				g.drawString("名前を入力してください↓↓↓" , 250, 180);
 	        }else if(mode == 1) {
+	        	this.remove(User);
+	        	this.remove(Rank1);
+	        	this.remove(Rank2);
+	        	this.remove(Rank3);
+	        	//ゲーム中
 	            dimOfPanel = getSize();
 	            super.paintComponent(g);
+	            this.remove(InputUserName);
 	            // 各要素の描画
 	            drawMyPlane(g);       // 自機
 	            drawMyMissile(g);     // 自機のミサイル
@@ -185,10 +260,13 @@ public class shooting_game extends JFrame {
 	            drawEnemyMissile(g);  // 敵機のミサイル
 	            drawLifeMyPlane(g);	            
 	        }else if(mode == 3) {
-	        	numOfAlive = 12;
-	        	this.remove(label_time);
-	        	TimeWatch.stop();
-	        	timer.stop();
+	        	//負け画面
+	        	CountTime = 0.0; //タイマーリセット
+	        	numOfAlive = 12; //敵機リセット
+	        	this.remove(label_time); //タイマーラベル取り除き
+	        	this.remove(InputUserName);
+	        	TimeWatch.stop(); //タイマー停止
+	        	timer.stop(); //描画停止
 	        	setEnabled(true);; //パネルでキーを受付ける
 	        	dimOfPanel = getSize();
 		        super.paintComponent(g);
@@ -197,10 +275,13 @@ public class shooting_game extends JFrame {
 				g.setColor(Color.white);
 				g.drawString("ざんね〜〜〜〜〜〜〜〜〜〜〜〜ん", 150, 150);
 				g.setColor(Color.white);
-				g.drawString("Start: Enter  Exit: Shift + Q ", 200, 350);
+				g.drawString("Start: Enter  Exit: Shift + Q ", 200, 330);
+				System.out.println(UserName);
 	        }else if(mode == 4) {
+	        	//勝利画面
 	        	numOfAlive = 12;
 	        	this.remove(label_time);
+	        	this.remove(InputUserName);
 	        	TimeWatch.stop();
 	        	timer.stop();
 	        	setEnabled(true);; //パネルでキーを受付ける
@@ -209,9 +290,18 @@ public class shooting_game extends JFrame {
 		        Font font3 = new Font("HGP創英角ﾎﾟｯﾌﾟ体",Font.ITALIC,30);
 				g.setFont(font3);
 				g.setColor(Color.white);
-				g.drawString("おめでとうございます〜〜〜〜〜〜", 150, 150);
+				g.drawString("おめでとうございます〜〜〜〜〜〜", 150, 75);
 				g.setColor(Color.white);
-				g.drawString("Start: Enter  Exit: Shift + Q ", 200, 350);
+				
+				if(UserName.isEmpty()) {
+					UserName = "名無し";
+				}
+				WriteRank();
+	        	GetRanking();
+	        	RankingLabel();
+				CountTime = 0.0;
+				g.setColor(Color.white);
+				g.drawString("Restart: Enter  Exit: Shift + Q ", 200, 400);
 	        }
             // 敵機のスピード変更
             if (numOfAlive == 0) {
@@ -393,7 +483,17 @@ public class shooting_game extends JFrame {
 				}else if(myLifePoint == 1) {
 					g.drawImage(imgMeLife, myLifeX, myLifeY, this); 
 				}
-        }      
+        }
+        
+        public void GetRanking() {
+        	texts = dao.text_read();
+        	GetRank  = dao.LogicData(dao.parth_text(texts));
+        }
+        
+        public void WriteRank() {
+        	dao.text_make(); //ファイル作成
+        	dao.text_write(UserName, CountTime/10);
+        }
        
         //不要
         public void keyTyped(KeyEvent e){}
@@ -401,17 +501,10 @@ public class shooting_game extends JFrame {
     }
 }
 
-/*  要件定義
-・スタートボタン追加　→　いきなり始める。
-・ライフポイント追加　→　一発はきつい
-・スコア表示
-・全部倒し終わったら、ボスキャラ登場させて、えぐい強い（ほぼ勝てない）
- 	要件定義	*/
-
-
-/*
- 	初期化処理を分けて、リセット出来るように。
- 	基本的にコンストラクタは、１回しか作動できないから、初期化出来るように分ける。
-	４つの画面を作成。スタート画面、プレイ中、終了、ゲームオーバー
- 	エンターキーを使って開始。
-*/
+//ranking.setOpaque(true);
+//ranking.setBackground(Color.black);
+//ranking = new JLabel("aaaaaaaaaaaaaa");
+//ranking.setBounds(600, 0, 200, 50);
+//ranking.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 24));
+//ranking.setForeground(Color.red);
+//this.add(ranking);
